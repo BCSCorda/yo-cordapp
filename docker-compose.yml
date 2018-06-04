@@ -1,0 +1,70 @@
+version: '2'
+services:
+
+  Notary:
+    build:
+      context: .
+      args:
+        BUILDTIME_CORDA_VERSION: 3.1-corda
+    ports:
+      - "10002:10002"
+    networks:
+      overlay-network:
+        ipv4_address: 10.0.9.30
+
+    image: corda/node:3.1
+    container_name: Notary
+    volumes:
+      - ${path}/Notary/node.conf:/opt/corda/node.conf
+      - ${path}/Notary/cordapps/:/opt/corda/cordapps/
+      - ${path}/Notary/certificates/:/opt/corda/certificates/
+      - ${path}/Notary/network-parameters:/opt/corda/network-parameters
+      - ${path}/Notary/additional-node-infos/:/opt/corda/additional-node-infos/
+
+  CordaNodeA:
+    build:
+      context: .
+      args:
+        BUILDTIME_CORDA_VERSION: 3.1-corda
+    ports:
+       - "10005:10005"
+       - "10006:10006"
+       - "10031:10031"
+       - "10007:10007"
+    networks:
+      overlay-network:
+        ipv4_address: 10.0.9.31
+    image: corda/node:3.1
+    container_name: PartyA
+    volumes:
+      - ${path}/PartyA/node.conf:/opt/corda/node.conf
+      - ${path}/PartyA/cordapps/:/opt/corda/cordapps/
+      - ${path}/PartyA/certificates/:/opt/corda/certificates/
+      - ${path}/PartyA/network-parameters:/opt/corda/network-parameters
+      - ${path}/PartyA/additional-node-infos/:/opt/corda/additional-node-infos/
+
+  CordaNodeB:
+    build:
+      context: .
+      args:
+        BUILDTIME_CORDA_VERSION: 3.1-corda
+    ports:
+      - "10008:10008"
+      - "10009:10009"
+      - "10041:10041"
+      - "10010:10010"
+    networks:
+      overlay-network:
+        ipv4_address: 10.0.9.32
+    image: corda/node:3.1
+    container_name: PartyB
+    volumes:
+      - ${path}/PartyB/node.conf:/opt/corda/node.conf
+      - ${path}/PartyB/cordapps/:/opt/corda/cordapps/
+      - ${path}/PartyB/certificates/:/opt/corda/certificates/
+      - ${path}/PartyB/network-parameters:/opt/corda/network-parameters
+      - ${path}/PartyB/additional-node-infos/:/opt/corda/additional-node-infos/
+
+networks:
+  overlay-network:
+    external: true

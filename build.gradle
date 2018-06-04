@@ -3,8 +3,8 @@ version '4'
 
 buildscript {
     ext.corda_release_group = 'net.corda'
-    ext.corda_release_version = 'corda-3.0'
-    ext.corda_gradle_plugins_version = '3.0.9'
+    ext.corda_release_version = '3.1-corda'
+    ext.corda_gradle_plugins_version = '3.1.0'
     ext.kotlin_version = '1.1.60'
     ext.quasar_version = '0.7.6'
     ext.junit_version = '4.12'
@@ -80,33 +80,46 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
     directory "./build/nodes"
-    node {
-        name "O=Notary,L=London,C=GB"
+    ext.rpcUsers = [
+            ['username' : "user",
+             'password' : "password",
+             'permissions' : ["ALL"
+             ]
+            ]
+    ]
+   node {
+        name "CN=Notary,O=Notary,L=London,C=GB"
         notary = [validating : true]
         p2pPort 10002
+        rpcSettings {
+            address("localhost:10003")
+            adminAddress("localhost:10021")
+        }
+        rpcUsers = ext.rpcUsers
+        webPort 10004
         cordapps = ["$corda_release_group:corda-finance:$corda_release_version"]
     }
     node {
-        name "O=PartyA,L=London,C=GB"
+        name "CN=PartyA,O=PartyA,L=London,C=GB"
         p2pPort 10005
         rpcSettings {
             address("localhost:10006")
-            adminAddress("localhost:10046")
+            adminAddress("localhost:10031")
         }
         webPort 10007
         cordapps = ["$corda_release_group:corda-finance:$corda_release_version"]
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = ext.rpcUsers
     }
     node {
-        name "O=PartyB,L=New York,C=US"
+        name "CN=PartyB,O=PartyB,L=London,C=GB"
         p2pPort 10008
         rpcSettings {
             address("localhost:10009")
-            adminAddress("localhost:10049")
+            adminAddress("localhost:10041")
         }
         webPort 10010
         cordapps = ["$corda_release_group:corda-finance:$corda_release_version"]
-        rpcUsers = [[ user: "user1", "password": "test", "permissions": ["ALL"]]]
+        rpcUsers = ext.rpcUsers
     }
 }
 

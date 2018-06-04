@@ -65,6 +65,29 @@ the Yo! CorDapp.
 
 Five windows will open in the terminal. One for each node's node shell, plus webservers for Party A and Party B.
 
+# Running the nodes locally in docker containers
+
+1. `./gradlew deployNodes` - building may take upto a minute (it's much quicker if you already have the Corda binaries).
+2. `docker swarm init` - Initialize a swarm
+3. `sudo docker network create -d overlay --subnet=10.0.9.0/22 --attachable overlay-network` - Create a subnet of your own
+4. Specify static ip address of your choice for the containers/nodes in docker-compose.yml
+5. Specify the given nodes' ip addresses in nodes.properties file.
+6. Mention the nodes folder location in .env file
+7. `cd bootstrapnodes`
+8. `./deployNodes.sh` - Run deployNodes script. This runs a series of commands to generate the nodes with the specified ip address.
+9. `cd ..` - Exit bootstrapnodes folder.
+10. `docker-compose build` - Need to run only once and afterwards only if there is a change in the Dockerfile, run this command.
+11. `docker-compose up`
+
+NOTE: Docker swarm is currently used to assign static ip address to run the containers in the local machine. If not, containers will not be able to communicate with each other in the local machine.
+
+# Docker commands that may be of use
+
+1. `docker stop $(docker ps -q)` - Stop the containers
+2. `docker rm $(docker ps -a -q)` - Remove the containers
+3. `docker exec -t -i PartyA /bin/bash` - To access docker container bash
+
+
 ## Interacting with the CorDapp via HTTP
 
 The Yo! CorDapp defines a couple of HTTP API end-points.
@@ -78,7 +101,7 @@ terminal window or in the `build.gradle` file.
 Sending a Yo! from Party A to Party B (we use Party B's X500 organisation. You do not need to use the whole X500 name,
 using only the organisation works. In this case: PartyA, PartyB, Controller, etc.):
 
-    http://localhost:10007/api/yo/yo?target=O=PartyB
+    http://localhost:10007/api/yo/yo?target=PartyB
 
 Showing all of Party B's Yo's!:
 
