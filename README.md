@@ -27,12 +27,12 @@ The docker image is based on Alpine/OpenJDK (https://hub.docker.com/_/openjdk/) 
 11. `docker-compose up`
 
 **NOTE:**  
-```
+
 Docker swarm is currently used to assign static ip address to run the containers in the local machine. If not, containers will not be able to communicate with each other in the local machine.  
 
 Bootstraping the nodes is required because there is no provision to specify p2p and web address as part of deployNodes in build.gradle. 
 In later versions of Corda, if we get an option to specify ipaddress for p2p and web like rpc, we can remove bootstrapnodes folder and ignore running ./deployNodes.sh command.
-```
+
 
 # Docker-izing any CorDapp
 
